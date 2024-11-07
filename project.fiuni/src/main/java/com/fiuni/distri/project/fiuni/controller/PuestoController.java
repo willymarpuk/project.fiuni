@@ -1,3 +1,4 @@
+
 package com.fiuni.distri.project.fiuni.controller;
 
 
@@ -36,7 +37,7 @@ public class PuestoController implements ErrorController {
         logger.info("Obteniendo lista de puestos");
         try {
 
-        return new ResponseDto<>(200, "Puestos obtenidos", puestoService.findAllpuestos(pageable));
+            return new ResponseDto<>(200, "Puestos obtenidos", puestoService.findAllpuestos(pageable));
 
         }catch(Exception e) {
             logger.error("Ha ocurrido un error: " + e.getMessage());
@@ -52,7 +53,7 @@ public class PuestoController implements ErrorController {
         logger.info("Obteniendo un puesto");
         try{
 
-        return new ResponseDto<>(200,"Puesto Obtenido", puestoService.getByid(id));
+            return new ResponseDto<>(200,"Puesto Obtenido", puestoService.getByid(id));
 
         }catch(Exception e) {
             logger.error("Ha ocurrido un error: " + e.getMessage());
@@ -66,8 +67,9 @@ public class PuestoController implements ErrorController {
     public ResponseDto<Page<PuestoDto>> getByName(Pageable pageable, @PathVariable String name){
         logger.info("Obteniendo un puesto por el nombre");
         logger.info("El nombre es: {}",name);
-      ;  try {
-            return new ResponseDto<>(200, "Puesto Obtenido", puestoService.findAllPuestosByName(pageable, name));
+        ;  try {
+            String buscador = name.replace("+", " ");
+            return new ResponseDto<>(200, "Puesto Obtenido", puestoService.findAllPuestosByName(pageable, buscador));
         }catch (Exception e){
             logger.error("Ha ocurrido un error: " + e.getMessage());
         }
@@ -81,7 +83,7 @@ public class PuestoController implements ErrorController {
         logger.info("Creando un puesto");
         try {
 
-        return new ResponseDto<>(201, "Puesto Creado",puestoService.crearPuesto(puestoDto));
+            return new ResponseDto<>(201, "Puesto Creado",puestoService.crearPuesto(puestoDto));
 
         }catch(Exception e) {
             logger.error("Ha ocurrido un error: " + e.getMessage());
