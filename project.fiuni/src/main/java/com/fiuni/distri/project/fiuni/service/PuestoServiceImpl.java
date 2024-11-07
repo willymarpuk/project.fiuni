@@ -97,12 +97,14 @@ public class PuestoServiceImpl implements IPuestoService{
     public PuestoDto updatePuesto(PuestoDto puestoDto, Integer id) {
         logger.info("Actualizando un puesto");
         try {
-            if (puestoDto.getId() == id){
-                Puesto p = convertDTOtoDomain(puestoDto);
-                puestoDao.save(p);
-                logger.info("Puesto Cacheado");
-                return puestoDto;
-            }
+
+            Puesto p = puestoDao.findById(id).get();
+            p.setName(puestoDto.getNombre());
+            p.setSueldo(puestoDto.getSueldo());
+            puestoDao.save(p);
+            logger.info("Puesto Cacheado");
+            return puestoDto;
+
         }catch(Exception e) {
             logger.error("Ha ocurrido un error al actualizar el puesto", e);
         }
