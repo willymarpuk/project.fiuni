@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-//@Transactional
+@Transactional
 public class VacanteServiceImpl implements IVacanteService{
     @Autowired
     private IVacanteDao vacanteDao;

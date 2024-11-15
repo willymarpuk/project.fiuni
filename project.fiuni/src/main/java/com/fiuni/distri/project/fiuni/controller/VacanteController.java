@@ -83,7 +83,7 @@ public class VacanteController {
     public ResponseDto<AplicacionVacanteDto> updateAplicacionVacante(@PathVariable Integer id_cabecera, @RequestBody AplicacionVacanteDto apvdto, @PathVariable Integer id){
         logger.info("Actualizando los detalles de una vacante");
         try {
-            return new ResponseDto<>(201, "Detalles de la vacante actualizados", vacanteService.actualizarAplicacionVacante(id_cabecera, apvdto, id));
+            return new ResponseDto<>(200, "Detalles de la vacante actualizados", vacanteService.actualizarAplicacionVacante(id_cabecera, apvdto, id));
         }catch (Exception e){
             logger.error("Error al actualizar una vacante", e);
         }

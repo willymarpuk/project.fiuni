@@ -5,8 +5,10 @@ import com.fiuni.distri.project.fiuni.dao.IAplicacionVacanteDao;
 import com.fiuni.distri.project.fiuni.dao.IEmpleadoDao;
 import com.fiuni.distri.project.fiuni.dao.IVacanteDao;
 import com.fiuni.distri.project.fiuni.domain.AplicacionVacante;
+import com.fiuni.distri.project.fiuni.domain.Empleado;
 import com.fiuni.distri.project.fiuni.domain.Vacante;
 import com.fiuni.distri.project.fiuni.dto.AplicacionVacanteDto;
+import com.fiuni.distri.project.fiuni.exception.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -43,28 +46,43 @@ public class AplicacionVacanteServiceImpl implements IAplicacionVacanteService {
     @Override
     public AplicacionVacanteDto actualizarAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto, Integer id) {
         logger.info("Actualizando detalle del Vacante");
-        Vacante vacante = null;
-        AplicacionVacante aplicacionVacante = null;
+        AplicacionVacante aplicacionVacanteExistente = null;
+        AplicacionVacante aplicacionVacanteActual = null;
         try {
 
 
-            vacante = vacanteDao.findById(id_cabecera).get();
-            aplicacionVacante = aplicacionVacanteDao.findById(id).get();
-            if (vacante.getId() == aplicacionVacante.getVacante().getId() && aplicacionVacante.getId() == apvDto.getId()) {
-                AplicacionVacante apv = convertDtoToDOMAIN(apvDto);
-                aplicacionVacanteDao.save(apv);
-            
+            aplicacionVacanteExistente = aplicacionVacanteDao.findById(id).get();
 
-                Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).evict(apvDto.getId());
-                Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).put(apvDto.getId(), apvDto);
-                logger.info("AplicacionVacante Cacheado");
+            if (apvDto.getVacante_id() != 0) {
+                Vacante v = vacanteDao.findById(apvDto.getVacante_id())
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Vacante no encontrado con id " + apvDto.getVacante_id()));
+                aplicacionVacanteExistente.setVacante(v);
             }
+
+            if (apvDto.getCv() != null) {
+                aplicacionVacanteExistente.setCv(apvDto.getCv());
+            }
+
+            if (!apvDto.isFue_revisado() || apvDto.isFue_revisado()) {
+                aplicacionVacanteExistente.setFue_revisado(apvDto.isFue_revisado());
+            }
+
+            if (apvDto.getEncargado_id() != 0) {
+                aplicacionVacanteExistente.setEncargado(empleadoDao.findById(apvDto.getEncargado_id()).get());
+            }
+
+            aplicacionVacanteActual = aplicacionVacanteDao.save(aplicacionVacanteExistente);
+
+
+            Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).evict(apvDto.getId());
+            Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).put(apvDto.getId(), apvDto);
+            logger.info("AplicacionVacante Cacheado");
+
         } catch (Exception e) {
             logger.error("Ha ocurrido un error al actualizar el detalle la vacante", e);
         }
-        return apvDto;
+        return convertDOMAINtoDTO(aplicacionVacanteActual);
     }
-
 
     @Override
     public Page<AplicacionVacanteDto> getAplicacionVacanteByid(int id, Pageable pageable) {
