@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Service
@@ -100,7 +101,7 @@ public class AplicacionVacanteServiceImpl implements IAplicacionVacanteService {
             List<AplicacionVacante> apv = aplicacionVacanteDao.findAplicacionVacanteById(idcabecera);
             AplicacionVacante borrar = apv.get(id);
             aplicacionVacanteDao.delete(borrar);
-            logger.info("Borrando detalle de una cabecera");
+            logger.info("Detalle de una cabecera Borrado");
 
         }catch (Exception e) {
             logger.error("Ocurrio un error al borrar el detalle de una cabecera");
@@ -133,11 +134,27 @@ public class AplicacionVacanteServiceImpl implements IAplicacionVacanteService {
     public AplicacionVacanteDto obtenerAplicacionVacanteById(Integer idCabecera, Integer id) {
 
         AplicacionVacanteDto apvDto = null;
+        logger.info("Obteniendo un detalle de la vacante");
+        try {
+            List<AplicacionVacante> avl = aplicacionVacanteDao.findAplicacionVacanteById(idCabecera);
 
-       List<AplicacionVacante> avl = aplicacionVacanteDao.findAplicacionVacanteById(idCabecera);
 
-       apvDto = convertDOMAINtoDTO(avl.get(id));
+            Optional<AplicacionVacante> aplicacionVacante = avl.stream()
+                    .filter(av -> av.getId() ==id)
+                    .findFirst();
 
+            if (aplicacionVacante.isPresent()) {
+                apvDto = convertDOMAINtoDTO(aplicacionVacante.get());
+            } else {
+                logger.error("No se puede obtener el detalle de la vacante");
+                return null;
+            }
+
+        } catch (Exception e) {
+
+            logger.error("Error al obtener el detalle de la aplicación de vacante: " + e.getMessage());
+            return null;
+        }
 
         return apvDto;
     }
