@@ -40,14 +40,16 @@ public class AplicacionVacanteServiceImpl implements IAplicacionVacanteService {
 
 
     @Override
-    public AplicacionVacanteDto crearActualizarAplicacionVacante(Integer id, AplicacionVacanteDto apvDto) {
+    public AplicacionVacanteDto actualizarAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto, Integer id) {
         logger.info("Actualizando detalle del Vacante");
         Vacante vacante = null;
+        AplicacionVacante aplicacionVacante = null;
         try {
 
 
-            vacante = vacanteDao.findById(id).get();
-            if (vacante.getId() == apvDto.getVacante_id()) {
+            vacante = vacanteDao.findById(id_cabecera).get();
+            aplicacionVacante = aplicacionVacanteDao.findById(id).get();
+            if (vacante.getId() == aplicacionVacante.getVacante().getId() && aplicacionVacante.getId() == apvDto.getId()) {
                 AplicacionVacante apv = convertDtoToDOMAIN(apvDto);
                 aplicacionVacanteDao.save(apv);
             
@@ -89,6 +91,55 @@ public class AplicacionVacanteServiceImpl implements IAplicacionVacanteService {
         }
 
         return new PageImpl<>(apvpDtos);
+    }
+
+    @Override
+    public void deleteAplicacionVacante(int idcabecera, int id) {
+        logger.info("Borrando detalle de una cabecera");
+        try {
+            List<AplicacionVacante> apv = aplicacionVacanteDao.findAplicacionVacanteById(idcabecera);
+            AplicacionVacante borrar = apv.get(id);
+            aplicacionVacanteDao.delete(borrar);
+            logger.info("Borrando detalle de una cabecera");
+
+        }catch (Exception e) {
+            logger.error("Ocurrio un error al borrar el detalle de una cabecera");
+        }
+    }
+
+    @Override
+    public AplicacionVacanteDto creaAplicacionVacante(Integer idCabecera, AplicacionVacanteDto apvDto) {
+        logger.info("Creando detalle del Vacante");
+        Vacante vacante = null;
+        try {
+
+            vacante = vacanteDao.findById(idCabecera).get();
+            if (apvDto.getVacante_id() == vacante.getId()) {
+                AplicacionVacante apv = convertDtoToDOMAIN(apvDto);
+                aplicacionVacanteDao.save(apv);
+
+
+                Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).evict(apvDto.getId());
+                Objects.requireNonNull(cacheManager.getCache("AplicacionVacante")).put(apvDto.getId(), apvDto);
+                logger.info("AplicacionVacante Cacheado");
+            }
+        } catch (Exception e) {
+            logger.error("Ha ocurrido un error al crear el detalle la vacante", e);
+        }
+        return apvDto;
+    }
+
+    @Override
+    public AplicacionVacanteDto obtenerAplicacionVacanteById(Integer idCabecera, Integer id) {
+
+        AplicacionVacanteDto apvDto = null;
+
+       List<AplicacionVacante> avl = aplicacionVacanteDao.findAplicacionVacanteById(idCabecera);
+
+       apvDto = convertDOMAINtoDTO(avl.get(id));
+
+
+        return apvDto;
     }
 
 

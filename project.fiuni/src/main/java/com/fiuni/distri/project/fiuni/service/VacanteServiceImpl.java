@@ -124,15 +124,24 @@ public class VacanteServiceImpl implements IVacanteService{
         return convertDOMAINtoDTO(v);
     }
 
+    public AplicacionVacanteDto obtenerAplicacionVacanteByid(Integer id_cabecera, Integer id){
+        logger.info("Obteniendo detalle de una vacante");
+        return aplicacionVacanteService.obtenerAplicacionVacanteById(id_cabecera, id);
+    }
+
 
 
     @Override
-    public VacanteDto actualizarAplicacionVacante(Integer id, AplicacionVacanteDto apvDto) {
+    public AplicacionVacanteDto actualizarAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto, Integer id) {
         
-        aplicacionVacanteService.crearActualizarAplicacionVacante(id, apvDto);
-        Vacante v = vacanteDao.findById(apvDto.getVacante_id()).get();
-        VacanteDto vdto = convertDOMAINtoDTO(v);
-        return vdto;
+       return aplicacionVacanteService.actualizarAplicacionVacante(id_cabecera, apvDto, id);
+
+    }
+
+    @Override
+    public AplicacionVacanteDto crearAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto) {
+        return aplicacionVacanteService.creaAplicacionVacante(id_cabecera, apvDto);
+
     }
 
     @Override

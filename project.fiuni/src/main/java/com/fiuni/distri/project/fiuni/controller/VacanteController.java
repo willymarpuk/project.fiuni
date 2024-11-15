@@ -4,6 +4,7 @@ import com.fiuni.distri.project.fiuni.dto.AplicacionVacanteDto;
 
 import com.fiuni.distri.project.fiuni.dto.ResponseDto;
 import com.fiuni.distri.project.fiuni.dto.VacanteDto;
+import com.fiuni.distri.project.fiuni.service.IAplicacionVacanteService;
 import com.fiuni.distri.project.fiuni.service.IVacanteService;
 
 import org.slf4j.Logger;
@@ -20,7 +21,10 @@ public class VacanteController {
     @Autowired
     private IVacanteService vacanteService;
 
-    private static Logger logger = LoggerFactory.getLogger(PuestoController.class);
+    @Autowired
+    private IAplicacionVacanteService aplicacionVacanteService;
+
+    private static Logger logger = LoggerFactory.getLogger(VacanteController.class);
 
     @GetMapping({"", "/"})
     @ResponseBody
@@ -74,18 +78,32 @@ public class VacanteController {
         return new ResponseDto<>(500, "Error al crear una vacante", null);
     }
 
-    @PutMapping({"/{id}/aplicacionVacante"})
+    @PutMapping({"/{id_cabecera}/aplicacionVacante/{id}"})
     //actualiza los detalles de la vacante c/ id
-    // puede agregar detalles si la cabecera existe.
-    public ResponseDto<VacanteDto> updateAplicacionVacante(@PathVariable Integer id, @RequestBody AplicacionVacanteDto apvdto){
+    public ResponseDto<AplicacionVacanteDto> updateAplicacionVacante(@PathVariable Integer id_cabecera, @RequestBody AplicacionVacanteDto apvdto, @PathVariable Integer id){
         logger.info("Actualizando los detalles de una vacante");
         try {
-            return new ResponseDto<>(201, "Detalles de la vacante actualizados", vacanteService.actualizarAplicacionVacante(id, apvdto));
+            return new ResponseDto<>(201, "Detalles de la vacante actualizados", vacanteService.actualizarAplicacionVacante(id_cabecera, apvdto, id));
         }catch (Exception e){
             logger.error("Error al actualizar una vacante", e);
         }
         return new ResponseDto<>(500, "Error al actualizar los detalles de una vacante", null);
     }
+
+    // agrega detalles si la cabecera existe.
+    @PostMapping({"/{id_cabecera}/aplicacionVacante"})
+    public ResponseDto<AplicacionVacanteDto> createAplicacionVacante(@PathVariable Integer id_cabecera, @RequestBody AplicacionVacanteDto apvdto){
+        logger.info("Creando detalle de una vacante");
+        try {
+            return new ResponseDto<>(201, "Detalle de la vacante creado", vacanteService.crearAplicacionVacante(id_cabecera, apvdto));
+        }catch (Exception e){
+            logger.error("Error al crear detalle de una vacante", e);
+        }
+        return new ResponseDto<>(500, "Error al crear el detalles de una vacante", null);
+    }
+
+
+
 
     @PutMapping("/{id}")
     //actualiza la cabecera de las vacantes
@@ -111,5 +129,33 @@ public class VacanteController {
         }
         return new ResponseDto<>(500, "Error al eliminar la vacante", null);
     }
+
+    @DeleteMapping("/{idcabecera}/aplicacionVacante/{id}")
+    //borra detalle con id de la cabecera idcabecera
+    public ResponseDto<VacanteDto> deleteAplicacionVacantebyId(@PathVariable int id, @PathVariable int idcabecera){
+        logger.info("Eliminando un detalle de la vacante");
+        try {
+            aplicacionVacanteService.deleteAplicacionVacante(idcabecera, id);
+            return new ResponseDto<>(200, "Detalle de la Vacante eliminado", null);
+        }catch (Exception e){
+            logger.error("Error al eliminar un detalle de la vacante", e);
+        }
+        return new ResponseDto<>(500, "Error al eliminar un detalle de la vacante", null);
+    }
+
+
+    @GetMapping({"/{id_cabecera}/aplicacionVacante/{id}"})
+    @ResponseBody
+    //obtiene un detalle
+    public ResponseDto<AplicacionVacanteDto> getAplicacionVacante(@PathVariable int id_cabecera, @PathVariable Integer id){
+        logger.info("Obteniendo un detalle");
+        try{
+            return new ResponseDto<>(200, "Detalles de la vacante obtenido", vacanteService.obtenerAplicacionVacanteByid(id_cabecera, id));
+        }catch (Exception e){
+            logger.error("Error al obtener el detalle de una vacante", e);
+        }
+        return new ResponseDto<>(500, "Error al obtener el detalle de la vacante", null);
+    }
+
 
 }

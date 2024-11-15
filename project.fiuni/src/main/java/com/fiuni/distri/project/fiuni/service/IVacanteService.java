@@ -20,7 +20,11 @@ public interface IVacanteService {
 
     VacanteDto crearVacante(VacanteDto vacante);
 
-    VacanteDto actualizarAplicacionVacante(Integer id, AplicacionVacanteDto apvDto);
+    AplicacionVacanteDto actualizarAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto, Integer id);
+
+    AplicacionVacanteDto crearAplicacionVacante(Integer id_cabecera, AplicacionVacanteDto apvDto);
 
     VacanteDto actualizarCabeceraVacante(Integer id, VacanteDto vdto);
+
+    AplicacionVacanteDto obtenerAplicacionVacanteByid(Integer id_cabecera, Integer id);
 }
