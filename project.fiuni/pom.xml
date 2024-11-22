@@ -179,14 +179,14 @@
 			<artifactId>domain-dto</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>../../../../../../../../../lib/domain-dto.jar</systemPath>
+			<systemPath>${basedir}/lib/domain-dto.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.fiuni.distri</groupId>
 			<artifactId>auth-module</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>../../../../../../../../../lib/internal-auth-module.jar</systemPath>
+			<systemPath>${basedir}/lib/internal-auth-module.jar</systemPath>
 		</dependency>
 
 
