@@ -107,13 +107,6 @@
 			<version>3.1.5</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -142,10 +135,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
@@ -179,19 +168,15 @@
 			<artifactId>domain-dto</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>C:/Users/Acer/Desktop/Cluster/Cluster/modulos-api/libs/domain-dto.jar</systemPath>
+			<systemPath>${basedir}/lib/domain-dto.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.fiuni.distri</groupId>
 			<artifactId>auth-module</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>system</scope>
-			<systemPath>C:/Users/Acer/Desktop/internal-auth-module.jar</systemPath>
+			<systemPath>${basedir}/lib/internal-auth-module.jar</systemPath>
 		</dependency>
-
-
-
-
 
 	</dependencies>
 
@@ -209,6 +194,14 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<packagingExcludes>**/*.java</packagingExcludes>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

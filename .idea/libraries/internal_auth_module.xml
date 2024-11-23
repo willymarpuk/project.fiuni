@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="internal-auth-module">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/project.fiuni/lib/internal-auth-module.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
